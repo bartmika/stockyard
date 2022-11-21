@@ -1,0 +1,37 @@
+version: '3'
+
+tasks:
+  start:
+    cmds:
+      - docker-compose -p stockyard -f dev.docker-compose.yml up
+
+  end:
+    cmds:
+      - docker-compose -p stockyard -f dev.docker-compose.yml down
+
+  console:
+    cmds:
+      - docker exec -it stockyard /bin/sh
+
+  pgconsole:
+    cmds:
+      - docker exec -it stockyard_citus_coordinator psql -U golang -d stockyard_db
+
+  deploy:
+    cmds:
+      - docker build -f Dockerfile -t bartmika/stockyard:latest --platform linux/amd64 .
+      - docker tag bartmika/stockyard:latest bartmika/stockyard:latest
+      - docker push bartmika/stockyard:latest
+
+  # The following task will perform a vulnerability scan on our golang project and display any issues found.
+  scan:
+    cmds:
+      - govulncheck ./...
+      - trivy image bartmika/stockyard:latest
+      - trivy repo https://github.com/bartmika/stockyard.git
+
+  # The following command will upgade all the dependencies in this project.
+  upgrade_dep:
+    cmds:
+      - go get -u ./...
+      - go mod tidy

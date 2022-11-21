@@ -1,0 +1,124 @@
+# HOW TO USE:
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
+#   docker-compose -p stockyard -f dev.docker-compose.yml up   #
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
+version: '3.8'
+services:
+  app:
+    container_name: stockyard
+    image: stockyard
+    stdin_open: true
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+        STOCKYARD_DB_HOST: citus_coordinator
+        STOCKYARD_DB_PORT: 5432
+        STOCKYARD_DB_USER: ${STOCKYARD_DB_USER}
+        STOCKYARD_DB_PASSWORD: ${STOCKYARD_DB_PASSWORD}
+        STOCKYARD_DB_NAME: ${STOCKYARD_DB_NAME}
+        STOCKYARD_APP_IP: 0.0.0.0
+        STOCKYARD_APP_PORT: 8000
+    build:
+      context: .
+      dockerfile: ./dev.Dockerfile
+    volumes:
+        - ./:/go/src/github.com/bartmika/stockyard
+    links:
+      - citus_coordinator
+    depends_on:
+      - citus_coordinator
+    ports:
+      - "8000:8000"
+
+  citus_coordinator:
+      container_name: stockyard_citus_coordinator
+      image: citusdata/citus:11.1
+      labels: ["com.citusdata.role=Master"]
+      restart: unless-stopped
+      env_file:
+        - .env
+      environment:
+          POSTGRES_PASSWORD: ${STOCKYARD_DB_PASSWORD}
+          POSTGRES_USER: ${STOCKYARD_DB_USER}
+          POSTGRES_DB: ${STOCKYARD_DB_NAME}
+          POSTGRESQL_PORT: 5432
+          PGUSER: "${STOCKYARD_DB_USER:-postgres}"
+          PGPASSWORD: "${STOCKYARD_DB_PASSWORD}"
+          POSTGRES_HOST_AUTH_METHOD: "trust"
+      volumes:
+         - coordinator_data:/var/lib/postgresql/data
+         - ./dev.docker-compose.sql:/docker-entrypoint-initdb.d/init.sql # DEVELOPERS NOTE: THIS IS WHERE THE DB CLUSTER GETS INTERCONNECTED.
+      depends_on:
+         - citus_worker1
+         - citus_worker2
+      links:
+         - citus_worker1
+         - citus_worker2
+      logging:
+         driver: "none" # We don't want to see any logs from this container.
+
+  citus_worker1:
+      container_name: stockyard_citus_worker1
+      image: citusdata/citus:11.1
+      labels: ["com.citusdata.role=Worker"]
+      restart: unless-stopped
+      env_file:
+        - .env
+      environment:
+          POSTGRES_PASSWORD: ${STOCKYARD_DB_PASSWORD}
+          POSTGRES_USER: ${STOCKYARD_DB_USER}
+          POSTGRES_DB: ${STOCKYARD_DB_NAME}
+          POSTGRESQL_PORT: 5432
+          PGUSER: "${STOCKYARD_DB_USER:-postgres}"
+          PGPASSWORD: "${STOCKYARD_DB_PASSWORD}"
+          POSTGRES_HOST_AUTH_METHOD: "trust"
+      volumes:
+         - worker1_data:/var/lib/postgresql/data
+      logging:
+        driver: "none" # We don't want to see any logs from this container.
+
+  citus_worker2:
+      container_name: stockyard_citus_worker2
+      image: citusdata/citus:11.1
+      labels: ["com.citusdata.role=Worker"]
+      restart: unless-stopped
+      env_file:
+        - .env
+      environment:
+          POSTGRES_PASSWORD: ${STOCKYARD_DB_PASSWORD}
+          POSTGRES_USER: ${STOCKYARD_DB_USER}
+          POSTGRES_DB: ${STOCKYARD_DB_NAME}
+          POSTGRESQL_PORT: 5432
+          PGUSER: "${STOCKYARD_DB_USER:-postgres}"
+          PGPASSWORD: "${STOCKYARD_DB_PASSWORD}"
+          POSTGRES_HOST_AUTH_METHOD: "trust"
+      volumes:
+         - worker2_data:/var/lib/postgresql/data
+      logging:
+        driver: "none" # We don't want to see any logs from this container.
+
+  pgadmin:
+     container_name: stockyard_pgadmin4
+     image: 'dpage/pgadmin4:6.16'
+     restart: unless-stopped
+     logging:
+       driver: none
+     environment:
+       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+       PGADMIN_LISTEN_PORT: 80
+       POSTGRESQL_HOST: citus_coordinator
+       GUNICORN_ACCESS_LOGFILE: /dev/null
+     ports:
+       - '8080:80'
+     volumes:
+       - pgadmin_data:/var/lib/pgadmin
+     depends_on:
+       - citus_coordinator
+
+volumes:
+    coordinator_data:
+    worker1_data:
+    worker2_data:
+    pgadmin_data:
