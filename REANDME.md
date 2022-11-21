@@ -1,6 +1,6 @@
 # stockyard
 **IN PROGRESS - USE AT YOUR OWN RISK**
-Simple distributed *time-series data* storage written in Go and powered by Postgres using the [Citus extension](https://github.com/citusdata/citus).
+Distributed *time-series data* storage written in Go and powered by Postgres using the [Citus extension](https://github.com/citusdata/citus).
 
 ## Features:
 
