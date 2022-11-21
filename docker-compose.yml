@@ -1,12 +1,12 @@
 # HOW TO USE:
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
-#   docker-compose -p stockyard -f dev.docker-compose.yml up   #
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
+#   docker-compose -p stockyard -f docker-compose.yml up   #
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
 version: '3.8'
 services:
   app:
     container_name: stockyard
-    image: stockyard
+    image: bartmika/stockyard:latest
     stdin_open: true
     restart: unless-stopped
     env_file:
@@ -19,9 +19,6 @@ services:
         STOCKYARD_DB_NAME: ${STOCKYARD_DB_NAME}
         STOCKYARD_APP_IP: 0.0.0.0
         STOCKYARD_APP_PORT: 8000
-    build:
-      context: .
-      dockerfile: ./dev.Dockerfile
     volumes:
         - ./:/go/src/github.com/bartmika/stockyard
     links:

@@ -1,7 +1,7 @@
 # stockyard
 **IN PROGRESS - USE AT YOUR OWN RISK**
 
-Distributed *time-series data* storage written in Go and powered by Postgres using the [Citus extension](https://github.com/citusdata/citus).
+Distributed time-series data storage written in Go and powered by Postgres using the [Citus extension](https://github.com/citusdata/citus).
 
 ## Features:
 
@@ -21,22 +21,28 @@ cd /your/project/directory
 Get the latest Compose file:
 
 ```shell
-curl https://raw.githubusercontent.com/xxx/docker-compose.yml > docker-compose.yml
+curl https://raw.githubusercontent.com/bartmika/stockyard/master/docker-compose.yml > docker-compose.yml
+```
+
+Get the latest database initialization script:
+
+```shell
+curl https://raw.githubusercontent.com/bartmika/stockyard/master/docker-compose.sql > docker-compose.sql
 ```
 
 Get the latest `env_file`:
 
 ```shell
-curl https://raw.githubusercontent.com/xxx/.env > .env
+curl https://raw.githubusercontent.com/bartmika/stockyard/master/.env_sample > .env
 ```
 
-Afterwords tweek the `.env` file, here are a few helpful comments:
+Afterwords tweak the `.env` file, here are a few helpful comments:
 
 * `STOCKYARD_DB_USER` - The admin user's username of the your database.
 * `STOCKYARD_DB_PASSWORD` - The admin user's password of your database.
 * `STOCKYARD_DB_NAME` - The database name. Recommended: `stockyard_db`.
 * `STOCKYARD_APP_SECRET_KEY` - *(Optional)* The secret key to store and be used internally. *Ignore for now.*
-* `STOCKYARD_HAS_ANALYZER` - The boolean value which controls whether to enable the analyzer to run on ever observation insert or delete.
+* `STOCKYARD_HAS_ANALYZER` - The boolean value which controls whether to enable the analyzer to run on ever observation insert or delete. Recommended to set to `true`.
 * `PGADMIN_DEFAULT_EMAIL` - *(Optional)* The `pgadmin` administrators account email if you want to use `pgadmin`.
 * `PGADMIN_DEFAULT_PASSWORD` - *(Optional)* The `pgadmin` administrators account password if you want to use `pgadmin`.
 
