@@ -3,6 +3,7 @@
 prod.Dockerfile
 dev.Dockerfile
 Dockerfile
+.git
 .dockerignore
 .gitignore
 README.md
