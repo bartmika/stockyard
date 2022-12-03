@@ -3,14 +3,27 @@
 
 Distributed time-series data storage written in Go and powered by Postgres using the [Citus extension](https://github.com/citusdata/citus).
 
-## Features:
+## ⭐️ Why
+Storing large volume of accessible time-series data is HARD.
+
+As a developer, you need to manage horizontally scalable database clusters, architecture correct data-structures and successfully integrate into your app. If you don't roll your own solution, you can use third-party software like [influxdb](https://www.influxdata.com) or [Timescale](https://www.timescale.com) but self-hosting a cluster is challenging. Don't care about self-hosting and looking for a fully managed service like [tidb](https://www.pingcap.com/TIDB/) or [dynamodb](https://aws.amazon.com/dynamodb/), then you'll control of managing your servers.
+
+[Citus extension](https://github.com/citusdata/citus) for the `Postgres` database combined with container orchestration software like [Docker Swarm](https://docs.docker.com/engine/swarm/) makes managing your self-hosted server easy. This project implements a simple time-series data-structure in [Citus](https://github.com/citusdata/citus) and provides an API which you can use in your app to store time-series data.
+
+If you know how to use [Citus](https://github.com/citusdata/citus) and [Docker Swarm](https://docs.docker.com/engine/swarm/) then with `stockyard` you can store large volume of time-series data.
+
+## 🌐 Use-cases
+- Data dump
+- Data analyzer
+
+## ✨ Features:
 
 * Runs in background accepting API calls.
 * Make API calls from your Golang application over network or localhost.
 * Horizontally scalable database if you know [Citus extension](https://github.com/citusdata/citus).
 * Easy to setup and manage if you know [`docker`](https://www.docker.com).
 
-## Install via Docker
+## 🐳 Install via Docker
 
 Go to your workdir:
 
@@ -58,7 +71,7 @@ Start the server.
 docker-compose -p stockyard -f docker-compose.yml up
 ```
 
-## Usage
+## 🚀 Usage
 
 ### 1. Create Entity
 An **entity** represents a device, instrument or some grouping of time-series data. The following sample code demonstrates how to **create** two IoT instruments and add the accompanying readings into it.
@@ -584,11 +597,102 @@ func main() {
 }
 ```
 
-## Contributing
+### 8. List Observation Count
+
+Here is how you list your *count* computations. If you want to see how *average* and *sum* computations are done, please see the [/examples](examples) folder.
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+	"time"
+
+	model "github.com/bartmika/stockyard/internal/domain/observation_count"
+	"github.com/bartmika/stockyard/pkg/dtos"
+	rpc_client "github.com/bartmika/stockyard/pkg/rpc"
+)
+
+// DESCRIPTION:
+// The purpose of this application is to connect to a running `stockyard` server
+// instance on your machine and list all the timekey(s) that you previously
+// submitted.
+//
+// HOW TO RUN:
+// cd ./examples/10-list-observation-count
+// go run main.go
+//
+// PRECONDITION:
+// You need to have inserted an entity with multiple observation before running this code.
+//    cd ../1-insert-entity; go run main.go;
+//    cd ../4-insert-observation; go run main.go;
+
+func main() {
+	////
+	//// Connect to our running stockyard server.
+	////
+
+	// Sample data to use in our example code.
+	ipAddress := "127.0.0.1"
+	port := "8000"
+
+	// Connect to a running server from this appolication.
+	applicationAddress := fmt.Sprintf("%s:%s", ipAddress, port)
+	client, err := rpc_client.NewClient(applicationAddress, 3, 15*time.Second)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	////
+	//// List our data within a time range.
+	////
+
+	// Generate the filter that you want to sort by.
+	dto := &dtos.ObservationCountFilterRequestDTO{
+		EntityIDs:               []uint64{1},
+		Frequency:               model.ObservationCountDayFrequency,
+		StartGreaterThenOrEqual: time.Date(2022, 01, 01, 0, 0, 0, 0, time.UTC),
+		FinishLessThenOrEqual:   time.Date(2023, 01, 01, 0, 0, 0, 0, time.UTC).AddDate(1, 0, 0),
+	}
+
+	// Execute the remote call.
+	res, err := client.ListObservationCounts(dto)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	////
+	//// View our results.
+	////
+
+	// Print the results.
+	if res.Count > 0 {
+		log.Println("the `count` results from the server are as follows:")
+		for _, tk := range res.Results {
+			fmt.Println("entity_id", tk.EntityID)
+			fmt.Println("start", tk.Start)
+			fmt.Println("finish", tk.Finish)
+			// fmt.Println("day", tk.Day)     // Not important but useful if you need it.
+			// fmt.Println("week", tk.Week)   // Not important but useful if you need it.
+			// fmt.Println("month", tk.Month) // Not important but useful if you need it.
+			// fmt.Println("year", tk.Year)   // Not important but useful if you need it.
+			fmt.Println("frequency", tk.Frequency)
+			fmt.Println("result", tk.Result)
+			fmt.Println("")
+		}
+	} else {
+		log.Println("no results returned")
+	}
+}
+```
+
+
+## 🙋‍♂️🤝 Contributing
 
 Found a bug? Want a feature to improve your developer experience when dealing with `stockyard`? Please create an [issue](https://github.com/bartmika/stockyard/issues).
 
-## License
+## 📃 License
 Made with ❤️ by [Bartlomiej Mika](https://bartlomiejmika.com).   
 The project is licensed under the [ISC License](LICENSE).
 
