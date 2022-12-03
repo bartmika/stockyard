@@ -1,4 +1,9 @@
 # stockyard
+[![GoDoc](https://godoc.org/github.com/gomarkdown/markdown?status.svg)](https://pkg.go.dev/github.com/bartmika/stockyard)
+[![Go Report Card](https://goreportcard.com/badge/github.com/bartmika/stockyard)](https://goreportcard.com/report/github.com/bartmika/stockyard)
+[![License](https://img.shields.io/github/license/bartmika/stockyard)](https://github.com/bartmika/stockyard/blob/master/LICENSE)
+![Go version](https://img.shields.io/github/go-mod/go-version/bartmika/stockyard)
+
 **IN PROGRESS - USE AT YOUR OWN RISK**
 
 Distributed time-series data storage written in Go and powered by Postgres using the [Citus extension](https://github.com/citusdata/citus).
@@ -13,7 +18,7 @@ As a developer, you need to manage horizontally scalable database clusters, arch
 If you know how to use [Citus](https://github.com/citusdata/citus) and [Docker Swarm](https://docs.docker.com/engine/swarm/) then with `stockyard` you can store large volume of time-series data.
 
 ## 🌐 Use-cases
-- Data dump
+- Data storage dump
 - Data analyzer
 
 ## ✨ Features:
@@ -22,6 +27,7 @@ If you know how to use [Citus](https://github.com/citusdata/citus) and [Docker S
 * Make API calls from your Golang application over network or localhost.
 * Horizontally scalable database if you know [Citus extension](https://github.com/citusdata/citus).
 * Easy to setup and manage if you know [`docker`](https://www.docker.com).
+* If you enable, simple analytics
 
 ## 🐳 Install via Docker
 
@@ -700,3 +706,10 @@ Resource used:
 
 * [citusdata/citus](https://github.com/citusdata/citus) is the distributed PostgreSQL extension that this server was built upon.
 * [Clean Architecture by Panayiotis Kritiotis](https://github.com/pkritiotis/go-climb-clean-architecture-example) was the architecture pattern used on this codebase.
+
+Alternative horizontally scalable databases (for time-series data) that you should check out as well:
+* [InfluxDB](https://www.influxdata.com)
+* [Timescale](https://www.timescale.com)
+* [Citus](https://github.com/citusdata/citus)
+* [TiDB](https://www.pingcap.com/TIDB/)
+* [DynamoDB](https://aws.amazon.com/dynamodb/)
