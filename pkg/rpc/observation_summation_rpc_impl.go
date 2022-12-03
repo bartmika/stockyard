@@ -5,7 +5,7 @@ import (
 )
 
 func (s *StockYardRPCClient) ListObservationSummations(dto *dtos.ObservationSummationFilterRequestDTO) (*dtos.ObservationSummationListResponseDTO, error) {
-	s.Logger.Info().Msg("calling remote list observation function...")
+	s.Logger.Info().Msg("calling remote list observation summations function...")
 
 	// Create the response payload that will be filled out by the server.
 	var reply dtos.ObservationSummationListResponseDTO

@@ -187,7 +187,7 @@ func main() {
 	}
 
 	////
-	//// List all our entites.
+	//// List all our entities.
 	////
 
 	// Generate the filter that you want to sort by.
