@@ -15,12 +15,12 @@ type ObservationCountResponseDTO struct {
 }
 
 type ObservationCountFilterRequestDTO struct {
-	EntityIDs                   []uint64  `json:"entity_ids"`
-	Frequency                   int8      `json:"frequency"`
-	TimestampGreaterThen        time.Time `json:"timestamp_gt,omitempty"`
-	TimestampGreaterThenOrEqual time.Time `json:"timestamp_gte,omitempty"`
-	TimestampLessThen           time.Time `json:"timestamp_lt,omitempty"`
-	TimestampLessThenOrEqual    time.Time `json:"timestamp_lte,omitempty"`
+	EntityIDs               []uint64  `json:"entity_ids"`
+	Frequency               int8      `json:"frequency"`
+	StartGreaterThen        time.Time `json:"start_gt,omitempty"`
+	StartGreaterThenOrEqual time.Time `json:"start_gte,omitempty"`
+	FinishLessThen          time.Time `json:"finish_lt,omitempty"`
+	FinishLessThenOrEqual   time.Time `json:"finish_lte,omitempty"`
 }
 
 type ObservationCountListResponseDTO struct {

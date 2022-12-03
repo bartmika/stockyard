@@ -25,6 +25,7 @@ type ObservationSummation struct {
 
 type ObservationSummationFilter struct {
 	EntityIDs               []uint64  `json:"entity_ids"`
+	Frequency               int8      `json:"frequency"`
 	StartGreaterThen        time.Time `json:"start_gt,omitempty"`
 	StartGreaterThenOrEqual time.Time `json:"start_gte,omitempty"`
 	FinishLessThen          time.Time `json:"finish_lt,omitempty"`
